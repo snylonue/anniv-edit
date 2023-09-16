@@ -1,8 +1,9 @@
 pub mod anniv;
 pub mod error;
 
-use reqwest::{Client, ClientBuilder, Url};
+use reqwest::{Client, ClientBuilder, RequestBuilder, Url};
 use ring::digest::{digest, SHA256};
+use serde::de::DeserializeOwned;
 use serde_json::json;
 use snafu::{ResultExt, Snafu};
 
@@ -43,44 +44,23 @@ impl AnnivClient {
         let hash = digest(&SHA256, password.as_bytes());
         let hash = hex::encode(hash);
 
-        self.client
-            .post(self.url.join("api/user/login").context(UrlSnafu)?)
-            .json(&json!({
-                "email": username,
-                "password": hash
-            }))
-            .send()
-            .await
-            .context(NetworkSnafu {
-                endpoint: "/user/login",
-            })?
-            .json::<AnnivResponse<UserInfo>>()
-            .await
-            .context(NetworkSnafu {
-                endpoint: "/user/login",
-            })?
-            .into_result()
-            .context(AnnivSnafu)
+        send_request(
+            self.client
+                .post(self.url.join("api/user/login").context(UrlSnafu)?)
+                .json(&json!({
+                    "email": username,
+                    "password": hash
+                })),
+            "/api/user/login",
+        )
+        .await
     }
 
     pub async fn playlist(&self, id: &str) -> Result<Playlist, Error> {
         let mut url = self.url.join("api/playlist").context(UrlSnafu)?;
         url.query_pairs_mut().clear().append_pair("id", id);
 
-        self.client
-            .get(url)
-            .send()
-            .await
-            .context(NetworkSnafu {
-                endpoint: "/api/playlist",
-            })?
-            .json::<AnnivResponse<Playlist>>()
-            .await
-            .context(NetworkSnafu {
-                endpoint: "/api/playlist",
-            })?
-            .into_result()
-            .context(AnnivSnafu)
+        send_request(self.client.get(url), "/api/playlist").await
     }
 
     pub async fn playlists(&self, user_id: Option<&str>) -> Result<Vec<PlaylistInfo>, Error> {
@@ -94,21 +74,22 @@ impl AnnivClient {
             _ => {}
         }
 
-        self.client
-            .get(url)
-            .send()
-            .await
-            .context(NetworkSnafu {
-                endpoint: "/api/playlists",
-            })?
-            .json::<AnnivResponse<Vec<PlaylistInfo>>>()
-            .await
-            .context(NetworkSnafu {
-                endpoint: "/api/playlists",
-            })?
-            .into_result()
-            .context(AnnivSnafu)
+        send_request(self.client.get(url), "/api/playlists").await
     }
 
     // pub async fn playlist(&self) -> Result<>
+}
+
+async fn send_request<T: DeserializeOwned>(
+    req: RequestBuilder,
+    endpoint: &'static str,
+) -> Result<T, Error> {
+    req.send()
+        .await
+        .context(NetworkSnafu { endpoint })?
+        .json::<AnnivResponse<T>>()
+        .await
+        .context(NetworkSnafu { endpoint })?
+        .into_result()
+        .context(AnnivSnafu)
 }
