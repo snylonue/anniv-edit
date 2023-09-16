@@ -7,7 +7,7 @@ use snafu::Snafu;
 use playlist::PlaylistItemWithId;
 
 #[derive(Debug, Snafu)]
-#[snafu(display("Error code {status}: {message}"))]
+#[snafu(display("Error {status}: {message}"))]
 pub struct Error {
     status: i32,
     message: String,

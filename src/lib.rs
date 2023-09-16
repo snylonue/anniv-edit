@@ -18,6 +18,7 @@ pub enum Error {
     UrlError {
         source: url::ParseError,
     },
+    #[snafu(display("AnnivError: {source}"))]
     AnnivError {
         source: anniv::Error,
     },
