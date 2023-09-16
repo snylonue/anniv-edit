@@ -46,3 +46,9 @@ impl<T> AnnivResponse<T> {
         }
     }
 }
+
+impl<T> Into<Result<T, Error>> for AnnivResponse<T> {
+    fn into(self) -> Result<T, Error> {
+        self.into_result()
+    }
+}
