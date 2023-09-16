@@ -34,7 +34,7 @@ impl AnnivClient {
         Self {
             client: ClientBuilder::new()
                 .cookie_store(true)
-                .no_proxy()
+                .user_agent(concat!("anniv-edit/", env!("CARGO_PKG_VERSION")))
                 .build()
                 .unwrap(),
             url,
@@ -77,8 +77,6 @@ impl AnnivClient {
 
         send_request(self.client.get(url), "/api/playlists").await
     }
-
-    // pub async fn playlist(&self) -> Result<>
 }
 
 async fn send_request<T: DeserializeOwned>(

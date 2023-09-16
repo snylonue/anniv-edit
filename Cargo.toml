@@ -7,7 +7,7 @@ edition = "2021"
 
 [dependencies]
 hex = "0.4.3"
-reqwest = { version = "0.11.20", features = ["json", "cookies"] }
+reqwest = { version = "0.11.20", features = ["json", "cookies", "rustls-tls"], default-features = false }
 ring = "0.16.20"
 serde = { version = "1.0.188", features = ["derive"] }
 serde_json = "1.0.107"
