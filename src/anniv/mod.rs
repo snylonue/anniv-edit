@@ -1,7 +1,10 @@
 pub mod playlist;
+pub mod types;
 
 use serde::Deserialize;
 use snafu::Snafu;
+
+use playlist::PlaylistItemWithId;
 
 #[derive(Debug, Snafu)]
 #[snafu(display("Error code {status}: {message}"))]
@@ -16,6 +19,11 @@ pub struct UserInfo {
     pub email: String,
     pub nickname: String,
     pub avatar: String,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct Playlist {
+    pub items: Vec<PlaylistItemWithId>,
 }
 
 #[derive(Debug, Clone, Deserialize)]

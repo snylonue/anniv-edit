@@ -6,7 +6,7 @@ use ring::digest::{digest, SHA256};
 use serde_json::json;
 use snafu::{ResultExt, Snafu};
 
-use anniv::{AnnivResponse, UserInfo};
+use anniv::{playlist::PlaylistInfo, AnnivResponse, Playlist, UserInfo};
 
 #[derive(Debug, Snafu)]
 pub enum Error {
@@ -58,6 +58,53 @@ impl AnnivClient {
             .await
             .context(NetworkSnafu {
                 endpoint: "/user/login",
+            })?
+            .into_result()
+            .context(AnnivSnafu)
+    }
+
+    pub async fn playlist(&self, id: &str) -> Result<Playlist, Error> {
+        let mut url = self.url.join("api/playlist").context(UrlSnafu)?;
+        url.query_pairs_mut().clear().append_pair("id", id);
+
+        self.client
+            .get(url)
+            .send()
+            .await
+            .context(NetworkSnafu {
+                endpoint: "/api/playlist",
+            })?
+            .json::<AnnivResponse<Playlist>>()
+            .await
+            .context(NetworkSnafu {
+                endpoint: "/api/playlist",
+            })?
+            .into_result()
+            .context(AnnivSnafu)
+    }
+
+    pub async fn playlists(&self, user_id: Option<&str>) -> Result<Vec<PlaylistInfo>, Error> {
+        let mut url = self.url.join("api/playlists").context(UrlSnafu)?;
+        match user_id {
+            Some(user_id) => {
+                url.query_pairs_mut()
+                    .clear()
+                    .append_pair("user_id", user_id);
+            }
+            _ => {}
+        }
+
+        self.client
+            .get(url)
+            .send()
+            .await
+            .context(NetworkSnafu {
+                endpoint: "/api/playlists",
+            })?
+            .json::<AnnivResponse<Vec<PlaylistInfo>>>()
+            .await
+            .context(NetworkSnafu {
+                endpoint: "/api/playlists",
             })?
             .into_result()
             .context(AnnivSnafu)

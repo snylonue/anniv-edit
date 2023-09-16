@@ -7,5 +7,9 @@ async fn main() -> Result<(), Error> {
 
     println!("{info:#?}");
 
+    let playlists = anniv.playlist("7").await?;
+
+    println!("{playlists:#?}");
+
     Ok(())
 }
