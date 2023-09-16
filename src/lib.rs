@@ -7,7 +7,7 @@ use serde::de::DeserializeOwned;
 use serde_json::json;
 use snafu::{ResultExt, Snafu};
 
-use anniv::{playlist::PlaylistInfo, AnnivResponse, Playlist, UserInfo};
+use anniv::{playlist::PlaylistInfo, AnnivResponse, CreatePlaylistBody, Playlist, UserInfo};
 
 #[derive(Debug, Snafu)]
 pub enum Error {
@@ -76,6 +76,16 @@ impl AnnivClient {
         }
 
         send_request(self.client.get(url), "/api/playlists").await
+    }
+
+    pub async fn create_playlist(&self, payload: CreatePlaylistBody) -> Result<Playlist, Error> {
+        send_request(
+            self.client
+                .put(self.url.join("api/playlist").context(UrlSnafu)?)
+                .json(&payload),
+            "/api/playlist",
+        )
+        .await
     }
 }
 

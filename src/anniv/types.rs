@@ -1,9 +1,9 @@
 use anni_repo::prelude::TrackType;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
-#[derive(Debug, Clone, Deserialize)]
-pub struct AlbumIdentifier(String); // uuid
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct AlbumIdentifier(Uuid); // uuid
 
 #[derive(Debug, Clone, Copy, Deserialize)]
 pub struct TrackIdentifier {
@@ -22,13 +22,13 @@ impl Into<anni_repo::prelude::TrackIdentifier> for TrackIdentifier {
     }
 }
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct DiscIdentifier {
     pub album_id: AlbumIdentifier,
     pub disc_id: u32,
 }
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct TrackInfo {
     pub title: String,
     pub artist: String,
