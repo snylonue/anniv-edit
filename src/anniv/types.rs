@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
-pub struct AlbumIdentifier(Uuid); // uuid
+pub struct AlbumIdentifier(pub Uuid); // uuid
 
 #[derive(Debug, Clone, Copy, Deserialize)]
 pub struct TrackIdentifier {
