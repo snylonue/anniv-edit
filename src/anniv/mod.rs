@@ -23,7 +23,13 @@ pub struct UserInfo {
 
 #[derive(Debug, Clone, Deserialize)]
 pub struct Playlist {
+    pub id: String,
+    pub description: String,
+    pub owner: String,
+    pub is_public: bool,
     pub items: Vec<PlaylistItemWithId>,
+    pub cover: PlaylistCover,
+    pub last_modified: u64,
 }
 
 #[derive(Debug, Clone, Default, Serialize)]
