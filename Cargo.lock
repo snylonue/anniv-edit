@@ -72,10 +72,27 @@ dependencies = [
 ]
 
 [[package]]
+name = "anniv-client"
+version = "0.1.0"
+source = "git+https://github.com/snylonue/anniv-client.git#accdda83b1799f981a9e1df72ee9bd57bb2a6288"
+dependencies = [
+ "anni-repo",
+ "hex",
+ "reqwest",
+ "ring",
+ "serde",
+ "serde_json",
+ "snafu",
+ "url",
+ "uuid",
+]
+
+[[package]]
 name = "anniv-edit"
 version = "0.1.0"
 dependencies = [
  "anni-repo",
+ "anniv-client",
  "hex",
  "reqwest",
  "ring",

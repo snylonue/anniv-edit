@@ -16,3 +16,4 @@ tokio = { version = "1.32.0", features = ["macros", "rt-multi-thread"] }
 url = "2.4.1"
 anni-repo ={ git = "https://github.com/ProjectAnni/anni.git", package = "anni-repo" }
 uuid = "1.4.1"
+anniv-client = { git = "https://github.com/snylonue/anniv-client.git" }
