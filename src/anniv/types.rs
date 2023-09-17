@@ -5,7 +5,7 @@ use uuid::Uuid;
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct AlbumIdentifier(pub Uuid); // uuid
 
-#[derive(Debug, Clone, Copy, Deserialize)]
+#[derive(Debug, Clone, Copy, Deserialize, Serialize)]
 pub struct TrackIdentifier {
     pub album_id: Uuid,
     pub disc_id: u32,

@@ -1,6 +1,8 @@
 pub mod playlist;
 pub mod types;
 
+pub use playlist::BasePatchPlaylistBody;
+
 use serde::{Deserialize, Serialize};
 use snafu::Snafu;
 

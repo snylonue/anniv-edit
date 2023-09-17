@@ -3,11 +3,14 @@ pub mod error;
 
 use reqwest::{Client, ClientBuilder, RequestBuilder, Url};
 use ring::digest::{digest, SHA256};
-use serde::de::DeserializeOwned;
+use serde::{de::DeserializeOwned, Serialize};
 use serde_json::json;
 use snafu::{ResultExt, Snafu};
 
-use anniv::{playlist::PlaylistInfo, AnnivResponse, CreatePlaylistBody, Playlist, UserInfo};
+use anniv::{
+    playlist::PlaylistInfo, AnnivResponse, BasePatchPlaylistBody, CreatePlaylistBody, Playlist,
+    UserInfo,
+};
 
 #[derive(Debug, Snafu)]
 pub enum Error {
@@ -86,6 +89,26 @@ impl AnnivClient {
             "/api/playlist",
         )
         .await
+    }
+
+    pub async fn patch_playlist<T: Serialize>(
+        &self,
+        body: BasePatchPlaylistBody<T>,
+    ) -> Result<Playlist, Error> {
+        send_request(
+            self.client
+                .patch(self.url.join("api/playlist").context(UrlSnafu)?)
+                .json(&body),
+            "/api/playlist",
+        )
+        .await
+    }
+
+    pub async fn remove_playlist(&self, id: &str) -> Result<(), Error> {
+        let mut url = self.url.join("api/playlist").context(UrlSnafu)?;
+        url.query_pairs_mut().append_pair("id", id);
+
+        send_request(self.client.delete(url), "/api/playlist").await
     }
 }
 
